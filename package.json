@@ -1,0 +1,24 @@
+{
+  "name": "leagues",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "tsc-watch --onSuccess \"node ./dist/server.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/costaef/leagues.git"
+  },
+  "keywords": [],
+  "author": "Eduardo Costa <costa.ef@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/costaef/leagues/issues"
+  },
+  "homepage": "https://github.com/costaef/leagues#readme",
+  "dependencies": {
+    "tsc-watch": "^4.1.0",
+    "typescript": "^3.8.2"
+  }
+}

@@ -1,6 +1,8 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import http from 'http';
 import express from 'express';
-import dotenv from 'dotenv';
 import { applyMiddleware, applyRoutes } from './utils';
 import middleware from './middleware';
 import routes from './services';
@@ -15,8 +17,6 @@ process.on('unhandledRejection', e => {
   console.log(e);
   process.exit(1);
 });
-
-dotenv.config();
 
 const router = express();
 

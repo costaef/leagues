@@ -1,29 +1,26 @@
-export default class UniqueId {
-  private static base62Chars =
+type EntityID = {
+  prefix: string;
+  id: string;
+  key: string;
+};
+
+export const generateEntityId = (prefix: string, length: number = 6) => {
+  const base62Chars =
     '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
-  readonly prefix: string;
-  readonly length: number;
+  let id = '';
 
-  constructor(prefix: string, length: number = 6) {
-    this.prefix = prefix;
-    this.length = length;
+  for (let i: number = 0; i < length; i++) {
+    const random = Math.floor(Math.random() * 62);
+
+    id = id.concat(base62Chars[random]);
   }
 
-  private base62Id = () => {
-    let id = '';
-
-    for (let i: number = 0; i < this.length; i++) {
-      const random = Math.floor(Math.random() * 62);
-
-      id = id.concat(UniqueId.base62Chars[random]);
-    }
-
-    return id;
+  const entityId: EntityID = {
+    prefix: prefix,
+    id: id,
+    key: `${prefix}:${id}`
   };
 
-  public readonly id = this.base62Id();
-  public readonly key = `${this.prefix}:${this.id}`;
-
-  static getKeyFromId = (prefix: string, id: string) => `${prefix}:${id}`;
-}
+  return entityId;
+};

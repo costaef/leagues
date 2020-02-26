@@ -1,7 +1,10 @@
-const port: number = parseInt(process.env.REDIS_PORT as string);
-const host: string = process.env.REDIS_HOST as string;
+export const config = {
+  port: parseInt(`${process.env.REDIS_PORT}`),
+  host: process.env.REDIS_HOST
+};
 
-export default {
-  port,
-  host
+export const configWithPassword = {
+  port: parseInt(`${process.env.REDIS_PORT}`),
+  host: process.env.REDIS_HOST,
+  password: process.env.REDIS_PASSWORD
 };

@@ -28,7 +28,12 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^5.0.0-alpha.7",
+    "luxon": "^1.22.0",
+    "tedis": "^0.1.12",
     "tsc-watch": "^4.1.0",
     "typescript": "^3.8.2"
+  },
+  "devDependencies": {
+    "@types/luxon": "^1.21.0"
   }
 }

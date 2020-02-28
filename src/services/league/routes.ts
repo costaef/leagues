@@ -5,10 +5,10 @@ import {
   checkContestantSchema,
   checkUpdateLeaguePointsSchema
 } from '../../middleware/check';
-import { redis } from '../../config/redisConfig';
+import { tedisPool } from '../../config/redisConfig';
 import { LeagueStoreRedis } from './store/LeagueStoreRedis';
 
-const leagueStore = new LeagueStoreRedis(redis);
+const leagueStore = new LeagueStoreRedis(tedisPool);
 const leagueController = new LeagueController(leagueStore);
 
 export default [

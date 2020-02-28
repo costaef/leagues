@@ -1,5 +1,5 @@
 import { LeagueStore } from './LeagueStore';
-import { Tedis } from 'tedis';
+import { TedisPool } from 'tedis';
 import { generateEntityId, getEntityIdfromKey } from '../../../utils/entityId';
 import {
   League,
@@ -24,10 +24,10 @@ const getLeagueContestantsKey = (id: string) =>
 const getLeagueRankingKey = (id: string) => `${LEAGUE_RANKING_PREFIX}:${id}`;
 
 export class LeagueStoreRedis implements LeagueStore {
-  private redis: Tedis;
+  private pool: TedisPool;
 
-  constructor(redis: Tedis) {
-    this.redis = redis;
+  constructor(pool: TedisPool) {
+    this.pool = pool;
   }
 
   async createLeague(name: string, deadline: string) {
@@ -39,14 +39,17 @@ export class LeagueStoreRedis implements LeagueStore {
       deadline: deadline
     };
 
-    await this.redis.hmset(leagueId.key, league);
+    const redis = await this.pool.getTedis();
+
+    await redis.hmset(leagueId.key, league);
     return leagueId;
   }
 
   async getLeague(id: string) {
     const leagueKey = getLeagueKey(id);
 
-    return (await this.redis.hgetall(leagueKey)) as League;
+    const redis = await this.pool.getTedis();
+    return (await redis.hgetall(leagueKey)) as League;
   }
 
   async createContestant(name: string) {
@@ -57,14 +60,16 @@ export class LeagueStoreRedis implements LeagueStore {
       name: name
     };
 
-    await this.redis.hmset(contestantId.key, contestant);
+    const redis = await this.pool.getTedis();
+    await redis.hmset(contestantId.key, contestant);
     return contestantId;
   }
 
   async getContestant(id: string) {
     const contestantKey = getContestantKey(id);
 
-    return (await this.redis.hgetall(contestantKey)) as Contestant;
+    const redis = await this.pool.getTedis();
+    return (await redis.hgetall(contestantKey)) as Contestant;
   }
 
   async addContestantToLeague(leagueId: string, contestantId: string) {
@@ -74,8 +79,10 @@ export class LeagueStoreRedis implements LeagueStore {
 
     let result: LeagueResult;
 
+    const redis = await this.pool.getTedis();
+
     // League exists?
-    if (!(await this.redis.hexists(leagueKey, 'id'))) {
+    if (!(await redis.hexists(leagueKey, 'id'))) {
       result = {
         status: Result.Error,
         error: ErrorResult.LeagueNotFound
@@ -85,7 +92,7 @@ export class LeagueStoreRedis implements LeagueStore {
     }
 
     // Contestant exists?
-    if (!(await this.redis.hexists(contestantKey, 'id'))) {
+    if (!(await redis.hexists(contestantKey, 'id'))) {
       result = {
         status: Result.Error,
         error: ErrorResult.ContestantNotFound
@@ -95,7 +102,7 @@ export class LeagueStoreRedis implements LeagueStore {
     }
 
     // Deadline expired?
-    const deadline = await this.redis.hget(leagueKey, 'deadline');
+    const deadline = await redis.hget(leagueKey, 'deadline');
     if (deadline && isDeadlineExpired(deadline)) {
       result = {
         status: Result.Error,
@@ -112,7 +119,7 @@ export class LeagueStoreRedis implements LeagueStore {
       return result;
     }
 
-    const addCount = await this.redis.sadd(leagueContestantsKey, contestantKey);
+    const addCount = await redis.sadd(leagueContestantsKey, contestantKey);
     if (addCount > 0) {
       result = {
         status: Result.Success
@@ -130,7 +137,8 @@ export class LeagueStoreRedis implements LeagueStore {
   async getLeagueMembers(leagueId: string) {
     const leagueContestantsKey = getLeagueContestantsKey(leagueId);
 
-    const memberKeys = await this.redis.smembers(leagueContestantsKey);
+    const redis = await this.pool.getTedis();
+    const memberKeys = await redis.smembers(leagueContestantsKey);
 
     return memberKeys.map(key => getEntityIdfromKey(key));
   }
@@ -145,8 +153,10 @@ export class LeagueStoreRedis implements LeagueStore {
 
     let result: LeagueResult;
 
+    const redis = await this.pool.getTedis();
+
     // League exists?
-    if (!(await this.redis.hexists(leagueKey, 'id'))) {
+    if (!(await redis.hexists(leagueKey, 'id'))) {
       result = {
         status: Result.Error,
         error: ErrorResult.LeagueNotFound
@@ -156,7 +166,7 @@ export class LeagueStoreRedis implements LeagueStore {
     }
 
     // Contestant exists?
-    if (!(await this.redis.hexists(contestantKey, 'id'))) {
+    if (!(await redis.hexists(contestantKey, 'id'))) {
       result = {
         status: Result.Error,
         error: ErrorResult.ContestantNotFound
@@ -167,7 +177,7 @@ export class LeagueStoreRedis implements LeagueStore {
 
     // Contestant is member of the league?
     const leagueContestantsKey = getLeagueContestantsKey(leagueId);
-    if (!(await this.redis.sismember(leagueContestantsKey, contestantKey))) {
+    if (!(await redis.sismember(leagueContestantsKey, contestantKey))) {
       result = {
         status: Result.Error,
         error: ErrorResult.ContestantNotAMember
@@ -178,7 +188,7 @@ export class LeagueStoreRedis implements LeagueStore {
 
     const leagueRankingKey = getLeagueRankingKey(leagueId);
 
-    const newScore = await this.redis.zincrby(
+    const newScore = await redis.zincrby(
       leagueRankingKey,
       pointsToAdd,
       contestantKey
@@ -200,7 +210,8 @@ export class LeagueStoreRedis implements LeagueStore {
   async getLeagueScoreboard(leagueId: string) {
     const leagueKey = getLeagueKey(leagueId);
 
-    const league = (await this.redis.hgetall(leagueKey)) as League;
+    const redis = await this.pool.getTedis();
+    const league = (await redis.hgetall(leagueKey)) as League;
 
     if (!isDeadlineExpired(league.deadline)) {
       return {
@@ -212,7 +223,7 @@ export class LeagueStoreRedis implements LeagueStore {
 
     const leagueRankingKey = getLeagueRankingKey(leagueId);
 
-    const ranking = await this.redis.zrevrange(
+    const ranking = await redis.zrevrange(
       leagueRankingKey,
       0,
       -1,

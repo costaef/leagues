@@ -1,4 +1,4 @@
-import { Tedis } from 'tedis';
+import { TedisPool } from 'tedis';
 
 const localConfig = {
   port: 6379,
@@ -11,6 +11,6 @@ const remoteConfig = {
   password: process.env.REDIS_PASSWORD
 };
 
-export const redis = new Tedis(
+export const tedisPool = new TedisPool(
   process.env.NODE_ENV === 'production' ? remoteConfig : localConfig
 );

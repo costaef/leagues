@@ -6,9 +6,13 @@ const isString = (value: any): value is string => {
   return typeof value === 'string';
 };
 
+const isNumber = (value: any): value is number => {
+  return typeof value === 'number';
+};
+
 export const checkLeagueSchema = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   if (!req.body.name || !req.body.deadline) {
@@ -24,13 +28,27 @@ export const checkLeagueSchema = (
 
 export const checkContestantSchema = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   if (!req.body.name) {
     throw new HTTP400Error('Invalid request body.');
   } else if (!isString(req.body.name)) {
     throw new HTTP422Error('The name property must be a string.');
+  } else {
+    next();
+  }
+};
+
+export const checkUpdateLeaguePointsSchema = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  if (!req.body.pointsToAdd) {
+    throw new HTTP400Error('Invalid request body.');
+  } else if (!isNumber(req.body.pointsToAdd)) {
+    throw new HTTP422Error('The pointsToAdd property must be a number.');
   } else {
     next();
   }

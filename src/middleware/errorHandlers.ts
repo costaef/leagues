@@ -2,19 +2,19 @@ import { Request, Response, NextFunction, Router } from 'express';
 import * as ErrorHandler from '../utils/ErrorHandlers';
 
 const handle404Error = (router: Router) => {
-  router.use((req: Request, res: Response) => {
+  router.use((_req: Request, _res: Response) => {
     ErrorHandler.notFoundError();
   });
 };
 
 const handleClientError = (router: Router) => {
-  router.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  router.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
     ErrorHandler.clientError(err, res, next);
   });
 };
 
 const handleServerError = (router: Router) => {
-  router.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  router.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
     ErrorHandler.serverError(err, res, next);
   });
 };

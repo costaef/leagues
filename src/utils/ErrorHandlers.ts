@@ -14,7 +14,7 @@ export const clientError = (err: Error, res: Response, next: NextFunction) => {
   }
 };
 
-export const serverError = (err: Error, res: Response, next: NextFunction) => {
+export const serverError = (err: Error, res: Response, _next: NextFunction) => {
   console.error(err);
   if (process.env.NODE_ENV === 'production') {
     res.status(500).json({ message: 'Internal Server Error' });

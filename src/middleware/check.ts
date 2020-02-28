@@ -12,11 +12,25 @@ export const checkLeagueSchema = (
   next: NextFunction
 ) => {
   if (!req.body.name || !req.body.deadline) {
-    throw new HTTP400Error('A name and deadline must be specified.');
+    throw new HTTP400Error('Invalid request body.');
   } else if (!isString(req.body.name)) {
     throw new HTTP422Error('The name property must be a string.');
   } else if (!isValidDateString(req.body.deadline)) {
     throw new HTTP422Error('Deadline string is not a valid date.');
+  } else {
+    next();
+  }
+};
+
+export const checkContestantSchema = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.body.name) {
+    throw new HTTP400Error('Invalid request body.');
+  } else if (!isString(req.body.name)) {
+    throw new HTTP422Error('The name property must be a string.');
   } else {
     next();
   }

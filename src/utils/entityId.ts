@@ -24,3 +24,21 @@ export const generateEntityId = (prefix: string, length: number = 6) => {
 
   return entityId;
 };
+
+export const getEntityIdfromID = (prefix: string, id: string) => {
+  return {
+    prefix,
+    id,
+    key: `${prefix}:${id}`
+  } as EntityId;
+};
+
+export const getEntityIdfromKey = (key: string) => {
+  const [prefix, id] = key.split(':');
+
+  return {
+    prefix,
+    id,
+    key
+  } as EntityId;
+};

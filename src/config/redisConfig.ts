@@ -1,16 +1,16 @@
 import { Tedis } from 'tedis';
 
-const config = {
-  port: parseInt(`${process.env.REDIS_PORT}`),
-  host: process.env.REDIS_HOST
+const localConfig = {
+  port: 6379,
+  host: '127.0.0.1'
 };
 
-const configWithPassword = {
+const remoteConfig = {
   port: parseInt(`${process.env.REDIS_PORT}`),
   host: process.env.REDIS_HOST,
   password: process.env.REDIS_PASSWORD
 };
 
 export const redis = new Tedis(
-  process.env.NODE_ENV === 'production' ? configWithPassword : config
+  process.env.NODE_ENV === 'production' ? remoteConfig : localConfig
 );

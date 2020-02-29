@@ -20,5 +20,5 @@ export interface LeagueStore {
     pointsToAdd: number
   ): Promise<LeagueResult>;
 
-  getLeagueScoreboard(leagueId: string): Promise<LeagueScoreboard>;
+  getLeagueScoreboard(leagueId: string): Promise<LeagueScoreboard | null>;
 }

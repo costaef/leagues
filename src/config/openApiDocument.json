@@ -1,0 +1,440 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+        "title":"Leagues",
+        "version":"1.0",
+        "description": "Create and manage fantasy games' leagues",
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/costaef/leagues/blob/master/LICENSE"
+        }
+    },
+    "servers": [
+        {
+            "url":"https://leagues-challenge.herokuapp.com/api/v1",
+            "description":"Production server"
+        },
+        {
+            "url":"http://localhost:3000/api/v1",
+            "description":"Local server"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "league": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "abc123"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Test League"
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2020-02-28"
+                    }
+                }
+            },
+            "createLeague": {
+                "type":"object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Test League"
+                    },
+                    "deadline": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2020-02-28"
+                    }
+                }
+            },
+            "createLeagueResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "abc123"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost:3000/api/v1/league/abc123"
+                    }
+                }
+            },
+            "contestant": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "abc123"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Test Contestant"
+                    }
+                }
+            },
+            "createContestant": {
+                "type":"object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Test Contestant"
+                    }
+                }
+            },
+            "createContestantResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "abc123"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost:3000/api/v1/contestant/abc123"
+                    }
+                }
+            },
+            "ranking": {
+                "type": "object",
+                "properties": {
+                    "contestantId": {
+                        "type": "string",
+                        "example": "abc123"
+                    },
+                    "score": {
+                        "type": "string",
+                        "example": "500"
+                    }
+                }
+            },
+            "leagueScoreboard": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "abc123"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Test League"
+                    },
+                    "ranking": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ranking"
+                        }
+                    }
+                }
+            },
+            "updatePoints": {
+                "type": "object",
+                "properties": {
+                    "pointsToAdd": {
+                        "type": "number",
+                        "example": 50
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "League"
+        },
+        {
+            "name": "Contestant"
+        }
+    ],
+    "paths": {
+        "/league": {
+            "post": {
+                "tags": ["League"],
+                "summary": "Create a league",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/createLeague"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema":{
+                                    "$ref": "#/components/schemas/createLeagueResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body"
+                    },
+                    "422": {
+                        "description": "Invalid league schema"
+                    }
+                }
+            }
+        },
+        "/league/{leagueId}": {
+            "get": {
+                "tags": ["League"],
+                "summary": "Get league info",
+                "parameters": [
+                    {
+                        "name": "leagueId",
+                        "in": "path",
+                        "description": "ID of the league to return",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/league"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "League not found"
+                    }
+                }
+            }
+        },
+        "/league/{leagueId}/contestants": {
+            "get": {
+                "tags": ["League"],
+                "summary": "Get the ID's of the league's contestants",
+                "parameters": [
+                    {
+                        "name": "leagueId",
+                        "in": "path",
+                        "description": "ID of the league to return",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "contestants": {
+                                            "type": "array",
+                                            "items":{
+                                                "type": "string"
+                                            },
+                                            "example": [ "abc123", "abc124" ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "League not found"
+                    }
+                }
+            }
+        },
+        "/league/{leagueId}/ranking": {
+            "get": {
+                "tags": ["League"],
+                "summary": "Get league ranking",
+                "parameters": [
+                    {
+                        "name": "leagueId",
+                        "in": "path",
+                        "description": "ID of the league to return",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/leagueScoreboard"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "League not found"
+                    }
+                }
+            }
+        },
+        "/league/{leagueId}/contestant/{contestantId}": {
+            "post": {
+                "tags": ["League"],
+                "summary": "Add a contestant to a league",
+                "parameters": [
+                    {
+                        "name": "leagueId",
+                        "in": "path",
+                        "description": "ID of the league",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "contestantId",
+                        "in": "path",
+                        "description": "ID of the contestant to add",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "League not found | Contestant not found | Deadline expired. League entry not allowed"
+                    }
+                }
+            },
+            "put": {
+                "tags": ["League"],
+                "summary":"Add points to a contestant",
+                "parameters": [
+                    {
+                        "name": "leagueId",
+                        "in": "path",
+                        "description": "ID of the league",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "contestantId",
+                        "in": "path",
+                        "description": "ID of the contestant to add points",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/updatePoints"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "League not found | Contestant not found"
+                    }
+                }
+            }
+        },
+        "/contestant": {
+            "post": {
+                "tags": ["Contestant"],
+                "summary": "Create contestant",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/createContestant"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema":{
+                                    "$ref": "#/components/schemas/createContestantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body"
+                    },
+                    "422": {
+                        "description": "Invalid contestant schema"
+                    }
+                }
+            }
+        },
+        "/contestant/{contestantId}": {
+            "get": {
+                "tags": ["Contestant"],
+                "summary": "Get contestant info",
+                "parameters": [
+                    {
+                        "name": "contestantId",
+                        "in": "path",
+                        "description": "ID of the contestant to return",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/contestant"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Contestant not found"
+                    }
+                }
+            }
+        }
+    }
+}

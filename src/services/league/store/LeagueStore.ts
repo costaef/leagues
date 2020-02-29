@@ -12,7 +12,8 @@ export interface LeagueStore {
     leagueId: string,
     contestantId: string
   ): Promise<LeagueResult>;
-  getLeagueMembers(leagueId: string): Promise<EntityId[]>;
+
+  getLeagueMembers(leagueId: string): Promise<EntityId[] | null>;
 
   updateContestantPoints(
     leagueId: string,

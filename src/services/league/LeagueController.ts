@@ -93,7 +93,7 @@ export class LeagueController {
     try {
       const contestants = await this.leagueStore.getLeagueMembers(leagueId);
 
-      if (isEmptyObject(contestants)) {
+      if (contestants === null) {
         throw new HTTP404Error('League ID not found.');
       } else {
         return contestants.map(contestant => contestant.id);

@@ -42,6 +42,14 @@ export class LeagueController {
     }
   }
 
+  async getLeagues() {
+    try {
+      return await this.leagueStore.getLeagueList();
+    } catch (error) {
+      throw new Error('Unable to retrieve the league list.');
+    }
+  }
+
   async createContestant(name: string) {
     try {
       return await this.leagueStore.createContestant(name);

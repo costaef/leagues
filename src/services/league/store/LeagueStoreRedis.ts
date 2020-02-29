@@ -1,6 +1,10 @@
 import { LeagueStore } from './LeagueStore';
 import { TedisPool } from 'tedis';
-import { generateEntityId, getEntityIdfromKey } from '../../../utils/entityId';
+import {
+  generateEntityId,
+  getEntityIdfromKey,
+  getIdFromKey
+} from '../../../utils/entityId';
 import {
   League,
   Contestant,
@@ -51,6 +55,12 @@ export class LeagueStoreRedis implements LeagueStore {
 
     const redis = await this.pool.getTedis();
     return (await redis.hgetall(leagueKey)) as League;
+  }
+
+  async getLeagueList() {
+    const redis = await this.pool.getTedis();
+
+    return (await redis.keys('league:*')).map(key => getIdFromKey(key));
   }
 
   async createContestant(name: string) {

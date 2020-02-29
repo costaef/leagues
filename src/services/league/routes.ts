@@ -34,6 +34,20 @@ export default [
     ]
   },
   {
+    path: '/api/v1/league',
+    method: 'get',
+    handler: [
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          const leagues = await leagueController.getLeagues();
+          res.status(200).json({ leagues });
+        } catch (error) {
+          next(error);
+        }
+      }
+    ]
+  },
+  {
     path: '/api/v1/league/:leagueId',
     method: 'get',
     handler: [

@@ -4,6 +4,7 @@ import { League, Contestant, LeagueResult, LeagueScoreboard } from '../types';
 export interface LeagueStore {
   createLeague(name: string, deadline: string): Promise<EntityId>;
   getLeague(id: string): Promise<League>;
+  getLeagueList(): Promise<string[]>;
 
   createContestant(name: string): Promise<EntityId>;
   getContestant(id: string): Promise<Contestant>;

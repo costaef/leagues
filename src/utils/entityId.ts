@@ -33,12 +33,31 @@ export const getEntityIdfromID = (prefix: string, id: string) => {
   } as EntityId;
 };
 
-export const getEntityIdfromKey = (key: string) => {
+const splitKey = (key: string) => {
   const [prefix, id] = key.split(':');
 
   return {
     prefix,
-    id,
+    id
+  };
+};
+
+export const getEntityIdfromKey = (key: string) => {
+  const splitedKey = splitKey(key);
+
+  return {
+    prefix: splitedKey.prefix,
+    id: splitedKey.id,
     key
   } as EntityId;
+};
+
+export const getIdFromKey = (key: string) => {
+  const splitedKey = splitKey(key);
+  return splitedKey.id;
+};
+
+export const getPrefixFromKey = (key: string) => {
+  const splitedKey = splitKey(key);
+  return splitedKey.prefix;
 };

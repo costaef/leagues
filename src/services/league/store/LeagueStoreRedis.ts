@@ -11,6 +11,7 @@ import {
   Ranking
 } from '../types';
 import { isDeadlineExpired } from '../../../utils/dateUtils';
+import { isEmptyObject } from '../../../utils';
 
 const LEAGUE_PREFIX = 'league';
 const CONTESTANT_PREFIX = 'contestant';
@@ -212,6 +213,10 @@ export class LeagueStoreRedis implements LeagueStore {
 
     const redis = await this.pool.getTedis();
     const league = (await redis.hgetall(leagueKey)) as League;
+
+    if (isEmptyObject(league)) {
+      return null;
+    }
 
     if (!isDeadlineExpired(league.deadline)) {
       return {

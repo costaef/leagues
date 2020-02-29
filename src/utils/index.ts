@@ -26,3 +26,5 @@ export const applyRoutes = (routes: Route[], router: Router) => {
     (router as any)[method](path, handler);
   }
 };
+
+export const isEmptyObject = (obj: object) => Object.keys(obj).length === 0;

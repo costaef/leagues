@@ -5,8 +5,8 @@ import {
 } from '../../utils/httpErrors';
 import { LeagueStore } from './store/LeagueStore';
 import { Result } from './types';
+import { isEmptyObject } from '../../utils';
 
-const isEmptyObject = (obj: object) => Object.keys(obj).length === 0;
 const isHTTPClientError = (error: Error) => error instanceof HttpClientError;
 
 export class LeagueController {
@@ -126,9 +126,18 @@ export class LeagueController {
 
   async getLeagueRanking(leagueId: string) {
     try {
-      return await this.leagueStore.getLeagueScoreboard(leagueId);
+      const scoreboard = await this.leagueStore.getLeagueScoreboard(leagueId);
+      if (!scoreboard) {
+        throw new HTTP404Error('League ID not found.');
+      } else {
+        return scoreboard;
+      }
     } catch (error) {
-      throw new Error('Unable to retrieve league scoreboard.');
+      if (isHTTPClientError(error)) {
+        throw error;
+      } else {
+        throw new Error('Unable to retrieve league scoreboard.');
+      }
     }
   }
 }

@@ -92,9 +92,18 @@ export class LeagueController {
   async getLeagueContestants(leagueId: string) {
     try {
       const contestants = await this.leagueStore.getLeagueMembers(leagueId);
-      return contestants.map(contestant => contestant.id);
+
+      if (isEmptyObject(contestants)) {
+        throw new HTTP404Error('League ID not found.');
+      } else {
+        return contestants.map(contestant => contestant.id);
+      }
     } catch (error) {
-      throw new Error('Unable to retrieve league members.');
+      if (isHTTPClientError(error)) {
+        throw error;
+      } else {
+        throw new Error('Unable to retrieve league members.');
+      }
     }
   }
 

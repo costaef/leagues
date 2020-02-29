@@ -136,9 +136,16 @@ export class LeagueStoreRedis implements LeagueStore {
   }
 
   async getLeagueMembers(leagueId: string) {
+    const leagueKey = getLeagueKey(leagueId);
     const leagueContestantsKey = getLeagueContestantsKey(leagueId);
 
     const redis = await this.pool.getTedis();
+
+    // League exists?
+    if (!(await redis.hexists(leagueKey, 'id'))) {
+      return null;
+    }
+
     const memberKeys = await redis.smembers(leagueContestantsKey);
 
     return memberKeys.map(key => getEntityIdfromKey(key));

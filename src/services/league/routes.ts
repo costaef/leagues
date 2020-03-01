@@ -36,33 +36,29 @@ export default [
   {
     path: '/api/v1/league',
     method: 'get',
-    handler: [
-      async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          const leagues = await leagueController.getLeagues();
-          res.status(200).json({ leagues });
-        } catch (error) {
-          next(error);
-        }
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const leagues = await leagueController.getLeagues();
+        res.status(200).json({ leagues });
+      } catch (error) {
+        next(error);
       }
-    ]
+    }
   },
   {
     path: '/api/v1/league/:leagueId',
     method: 'get',
-    handler: [
-      async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          const leagueId = req.params.leagueId;
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const leagueId = req.params.leagueId;
 
-          const league = await leagueController.getLeagueInfo(leagueId);
+        const league = await leagueController.getLeagueInfo(leagueId);
 
-          res.status(200).json(league);
-        } catch (error) {
-          next(error);
-        }
+        res.status(200).json(league);
+      } catch (error) {
+        next(error);
       }
-    ]
+    }
   },
   {
     path: '/api/v1/contestant',
@@ -88,58 +84,52 @@ export default [
   {
     path: '/api/v1/contestant/:contestantId',
     method: 'get',
-    handler: [
-      async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          const contestantId = req.params.contestantId;
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const contestantId = req.params.contestantId;
 
-          const contestant = await leagueController.getContestantInfo(
-            contestantId
-          );
+        const contestant = await leagueController.getContestantInfo(
+          contestantId
+        );
 
-          res.status(200).json(contestant);
-        } catch (error) {
-          next(error);
-        }
+        res.status(200).json(contestant);
+      } catch (error) {
+        next(error);
       }
-    ]
+    }
   },
   {
     path: '/api/v1/league/:leagueId/contestant/:contestantId',
     method: 'post',
-    handler: [
-      async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          const leagueId = req.params.leagueId;
-          const contestantId = req.params.contestantId;
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const leagueId = req.params.leagueId;
+        const contestantId = req.params.contestantId;
 
-          await leagueController.addContestantToLeague(leagueId, contestantId);
+        await leagueController.addContestantToLeague(leagueId, contestantId);
 
-          res.status(200).send();
-        } catch (error) {
-          next(error);
-        }
+        res.status(200).send();
+      } catch (error) {
+        next(error);
       }
-    ]
+    }
   },
   {
     path: '/api/v1/league/:leagueId/contestants',
     method: 'get',
-    handler: [
-      async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          const leagueId = req.params.leagueId;
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const leagueId = req.params.leagueId;
 
-          const contestants = await leagueController.getLeagueContestants(
-            leagueId
-          );
+        const contestants = await leagueController.getLeagueContestants(
+          leagueId
+        );
 
-          res.status(200).json({ contestants });
-        } catch (error) {
-          next(error);
-        }
+        res.status(200).json({ contestants });
+      } catch (error) {
+        next(error);
       }
-    ]
+    }
   },
   {
     path: '/api/v1/league/:leagueId/contestant/:contestantId',
@@ -169,22 +159,20 @@ export default [
   {
     path: '/api/v1/league/:leagueId/ranking',
     method: 'get',
-    handler: [
-      async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          const leagueId = req.params.leagueId;
+    handler: async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const leagueId = req.params.leagueId;
 
-          const scoreboard = await leagueController.getLeagueRanking(leagueId);
+        const scoreboard = await leagueController.getLeagueRanking(leagueId);
 
-          if (scoreboard.ranking.length === 0) {
-            res.status(200).json({ message: 'League ranking not available.' });
-          }
-
-          res.status(200).json(scoreboard);
-        } catch (error) {
-          next(error);
+        if (scoreboard.ranking.length === 0) {
+          res.status(200).json({ message: 'League ranking not available.' });
         }
+
+        res.status(200).json(scoreboard);
+      } catch (error) {
+        next(error);
       }
-    ]
+    }
   }
 ];

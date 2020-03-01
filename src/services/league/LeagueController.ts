@@ -34,7 +34,7 @@ export class LeagueController {
         return league;
       }
     } catch (error) {
-      if (error instanceof HttpClientError) {
+      if (isHTTPClientError(error)) {
         throw error;
       } else {
         throw new Error('Unable to retrieve league info.');
